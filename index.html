@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SIMPUS Sehat – Sistem Informasi Puskesmas</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap">
+<style>
+:root{--ink:#12303a;--mute:#5d7580;--bg:#eef5f3;--surf:#fff;--line:#d3e2de;--teal:#1b7f79;--teal-d:#0f5c58;--red:#c8453b;--amb:#b7791f;--ok:#2f855a;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e3f0ee;--mute:#93aeb3;--bg:#0d1d21;--surf:#14292e;--line:#264249;--teal:#3fb8af;--teal-d:#7fd8d0;--red:#f0786e;--amb:#e5b25d;--ok:#6fcf97;color-scheme:dark}}
+:root[data-theme="dark"]{--ink:#e3f0ee;--mute:#93aeb3;--bg:#0d1d21;--surf:#14292e;--line:#264249;--teal:#3fb8af;--teal-d:#7fd8d0;--red:#f0786e;--amb:#e5b25d;--ok:#6fcf97;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+.wrap{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+nav{background:#0f5c58;color:#fff;padding:20px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:4px}
+:root[data-theme="dark"] nav,:root:not([data-theme="light"]) nav{--x:0}
+nav h1{font-size:19px;font-weight:800;margin:0 8px 2px;letter-spacing:-.3px}
+nav small{margin:0 8px 18px;opacity:.75;display:block}
+nav a{color:#fff;text-decoration:none;padding:9px 12px;border-radius:8px;opacity:.85;display:block}
+nav a.on,nav a:hover{background:rgba(255,255,255,.16);opacity:1;font-weight:600}
+nav .who{margin-top:auto;font-size:13px;padding:10px 8px;border-top:1px solid rgba(255,255,255,.25)}
+nav button{background:none;border:1px solid rgba(255,255,255,.5);color:#fff;border-radius:8px;padding:6px 10px;cursor:pointer;margin-top:6px}
+main{padding:26px clamp(16px,3vw,36px);max-width:1100px;width:100%}
+h2{font-size:24px;margin:0 0 4px;letter-spacing:-.4px;font-weight:800}
+.sub{color:var(--mute);margin:0 0 20px}
+.stats{display:flex;flex-wrap:wrap;gap:0;border:1px solid var(--line);border-radius:12px;background:var(--surf);margin-bottom:20px;overflow:hidden}
+.stats div{flex:1 1 140px;padding:16px 18px;border-right:1px solid var(--line)}
+.stats b{font-size:30px;display:block;font-weight:800;color:var(--teal)}
+.stats span{color:var(--mute);font-size:13px}
+.grid{display:grid;grid-template-columns:3fr 2fr;gap:18px}
+.box{background:var(--surf);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:18px}
+.box h3{margin:0 0 12px;font-size:16px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;color:var(--mute);font-weight:600;padding:8px;border-bottom:2px solid var(--line)}
+td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.scroll{overflow-x:auto}
+label{display:block;font-weight:600;font-size:13px;margin:10px 0 4px}
+input,select,textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:0 14px}
+.btn{background:var(--teal);color:#fff;border:0;border-radius:8px;padding:9px 16px;font-weight:600;cursor:pointer}
+:root[data-theme="dark"] .btn{color:#06201e}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn{color:#06201e}}
+.btn.alt{background:transparent;color:var(--teal);border:1px solid var(--teal)}
+.btn.sm{padding:4px 10px;font-size:13px}
+.btn.del{background:var(--red);color:#fff}
+.tag{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:600;border:1px solid currentColor}
+.Menunggu,.Pending{color:var(--amb)}.Diperiksa{color:var(--teal)}.Selesai,.Aktif,.Aman{color:var(--ok)}.Nonaktif,.Menipis{color:var(--red)}.ck{display:flex;gap:8px;align-items:center;font-weight:400;margin-top:8px}.ck input{width:auto}
+.bars{display:flex;align-items:flex-end;gap:10px;height:150px;padding-top:8px}
+.bars div{flex:1;text-align:center;font-size:12px;color:var(--mute);display:flex;flex-direction:column;justify-content:flex-end;height:100%}
+.bars i{display:block;background:var(--teal);border-radius:5px 5px 0 0;min-height:3px}
+.bars em{font-style:normal;color:var(--ink);font-weight:600}
+.dx{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.login{max-width:380px;margin:12vh auto;padding:0 18px}
+.login .box{padding:26px}
+.hint{font-size:12.5px;color:var(--mute);margin-top:12px}
+.err{color:var(--red);font-size:13px;margin-top:8px}
+.toast{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;z-index:9}
+.empty{color:var(--mute);padding:14px 0}
+.vit{display:flex;gap:16px;flex-wrap:wrap;color:var(--mute);font-size:13px}
+.tl{border-left:3px solid var(--teal);padding-left:14px;margin:0 0 16px 6px}
+@media (max-width:820px){.wrap{grid-template-columns:1fr}nav{position:static;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center}nav small,nav .who{display:none}.grid{grid-template-columns:1fr}}
+.topbar{display:flex;justify-content:flex-end;align-items:center;gap:12px;padding:10px clamp(16px,3vw,36px);border-bottom:1px solid var(--line);background:var(--surf);position:sticky;top:env(safe-area-inset-top,0px);z-index:5;font-size:14px;color:var(--mute)}.topbar span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.wrap>div{min-width:0}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.45);display:grid;place-items:center;z-index:20;padding:16px}.ov .box{max-width:380px;width:100%;margin:0}
+.intro{position:fixed;inset:0;background:#0f5c58;color:#fff;display:grid;place-items:center;padding:22px;z-index:30;overflow:auto}
+.ib{max-width:430px;width:100%}.logo{width:56px;height:56px;border-radius:14px;background:#fff;color:#0f5c58;font:800 34px/56px sans-serif;text-align:center;margin-bottom:18px}
+.intro h1{font-size:30px;margin:0 0 4px;letter-spacing:-.6px;font-weight:800;line-height:1.15}.intro p{margin:0;opacity:.8}
+.intro ul{list-style:none;padding:0;margin:24px 0 12px}.intro li{opacity:.35;padding:4px 0;transition:opacity .3s}.intro li.on{opacity:1}.intro li.on::before{content:"\2713  "}
+.bar{height:4px;background:rgba(255,255,255,.25);border-radius:4px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:#fff;transition:width .5s}
+.tour{margin-top:22px;background:rgba(255,255,255,.12);border-radius:12px;padding:16px 18px}.tour b{display:block;margin-bottom:6px}.tour li{opacity:1;padding:3px 0}.tour li::before{content:"\2022  "}
+.lnk{background:none;border:0;color:#fff;opacity:.8;text-decoration:underline;cursor:pointer;margin-top:14px;padding:4px 0}
+@media (prefers-reduced-motion:reduce){.bar i,.intro li{transition:none}}
+body.ps main>*:not(#sks){display:none!important}
+@media print{nav,.noprint{display:none!important}.wrap{display:block}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const mem={};
+const S={get(k){try{const r=localStorage.getItem(k);if(r)return JSON.parse(r)}catch(e){}return mem[k]||null},
+set(k,v){mem[k]=v;try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const dstr=n=>{const d=new Date();d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)};
+const today=dstr(0);
+const ROLE={admin:'Administrator',petugas:'Petugas pendaftaran',dokter:'Dokter',pasien:'Pasien'};
+const MENU={pasien:[['beranda','Beranda'],['antrean','Ambil antrean'],['riwayat','Riwayat kunjungan'],['datasaya','Data saya'],['info','Info puskesmas']],
+admin:[['dashboard','Dashboard'],['pengguna','Manajemen pengguna'],['obat','Stok obat'],['log','Log aktivitas'],['pengaturan','Pengaturan'],['statistik','Statistik'],['laporan','Laporan']],
+petugas:[['dashboard','Dashboard'],['pasien','Data pasien'],['daftar','Pendaftaran & antrean'],['statistik','Statistik'],['laporan','Laporan']],
+dokter:[['dashboard','Dashboard'],['periksa','Pemeriksaan'],['rekam','Rekam medis'],['obat','Stok obat'],['statistik','Statistik'],['laporan','Laporan']]};
+const $=id=>document.getElementById(id);
+const byPri=(a,b)=>(a.status==='Selesai')-(b.status==='Selesai')||(!!b.darurat)-(!!a.darurat)||a.id-b.id;
+const setTheme=t=>{if(t==='auto')document.documentElement.removeAttribute('data-theme');else document.documentElement.dataset.theme=t;S.set('simpus_theme',t)};
+const hb=rows=>{const mx=Math.max(...rows.map(r=>r[1]),1);return rows.map(r=>`<div style="margin:9px 0"><div class="dx" style="border:0;padding:0"><span>${esc(r[0])}</span><b>${r[1]}</b></div><div style="height:8px;background:var(--line);border-radius:4px"><i style="display:block;height:100%;width:${r[1]/mx*100}%;background:var(--teal);border-radius:4px"></i></div></div>`).join('')||'<p class="empty">Belum ada data.</p>'};
+const fmt=d=>d.toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
+const CFG={nama:'Puskesmas Rawat Jalan',alamat:'Jl. Kesehatan No. 1, Pekanbaru',jam:'Senin–Sabtu, 08.00–14.00'};
+function dlg(msg,o={}){return new Promise(r=>{const d=document.createElement('div');d.className='ov';
+ d.innerHTML=`<div class="box" role="dialog" aria-modal="true"><p>${esc(msg).replace(/\n/g,'<br>')}</p>${o.input?`<input id="dli" type="${o.type||'text'}" value="${esc(o.def||'')}">`:''}<p style="display:flex;gap:8px;justify-content:flex-end;margin:12px 0 0">${o.info?'':'<button class="btn alt" id="dlc">Batal</button>'}<button class="btn" id="dlo">${o.ok||'OK'}</button></p></div>`;
+ document.body.appendChild(d);d.querySelector('input,#dlo').focus();const end=v=>{d.remove();r(v)};
+ d.querySelector('#dlo').onclick=()=>end(o.input?d.querySelector('#dli').value:true);const c=d.querySelector('#dlc');if(c)c.onclick=()=>end(o.input?null:false);
+ d.onkeydown=e=>{if(e.key==='Escape')end(o.input?null:false);if(e.key==='Enter')d.querySelector('#dlo').click()}})}
+const pwOk=p=>p.length>=8&&/[a-zA-Z]/.test(p)&&/\d/.test(p);
+const hx=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+const legacy=async p=>{try{return hx(await crypto.subtle.digest('SHA-256',new TextEncoder().encode('simpus:'+p)))}catch(e){return 'x'+btoa(unescape(encodeURIComponent(p)))}};
+const pbk=async(p,salt)=>{const k=await crypto.subtle.importKey('raw',new TextEncoder().encode(p),'PBKDF2',false,['deriveBits']);return hx(await crypto.subtle.deriveBits({name:'PBKDF2',hash:'SHA-256',salt:new TextEncoder().encode(salt),iterations:150000},k,256))};
+const hash=async p=>{try{const salt=hx(crypto.getRandomValues(new Uint8Array(16)));return 'pb:'+salt+':'+await pbk(p,salt)}catch(e){return legacy(p)}};
+const verify=async(a,p)=>{if(!a||!a.h)return false;if(a.h.startsWith('pb:')){const [,salt,h]=a.h.split(':');return h===await pbk(p,salt)}
+ if(a.h===await legacy(p)){a.h=await hash(p);save();return true}return false};
+const DX=['J06.9 ISPA','K30 Dispepsia','I10 Hipertensi','E11 Diabetes melitus tipe 2','A09 Diare','M79.1 Mialgia','L30.9 Dermatitis','R50.9 Demam'];
+const POLI=['Umum','Gigi','KIA'];
+
+function seed(){
+ const p=[['3314010101800001','Siti Aminah','1980-01-01','P','Jl. Sudirman 12, Pekanbaru','081200000001','0001234567'],
+ ['3314020205750002','Budi Santoso','1975-05-02','L','Jl. Soekarno-Hatta 45','081200000002','','Amoxicillin'],
+ ['3314030310010003','Dewi Anggraini','2001-10-03','P','Jl. Tuanku Tambusai 8','081200000003','0007654321'],
+ ['3314040412600004','Ahmad Fauzi','1960-12-04','L','Jl. Arifin Ahmad 77','081200000004','0001112223'],
+ ['3314050520150005','Rafi Pratama','2015-05-20','L','Jl. Imam Munandar 5','081200000005',''],
+ ['3314060615900006','Nur Hidayah','1990-06-15','P','Jl. Garuda Sakti 31','081200000006','0009998887']]
+ .map((r,i)=>({id:'P'+String(i+1).padStart(3,'0'),nik:r[0],nama:r[1],lahir:r[2],jk:r[3],alamat:r[4],telp:r[5],bpjs:r[6],alergi:r[7]||''}));
+ const k=[];let id=1;
+ for(let d=-6;d<=0;d++){const n=2+((d+9)%3);
+  for(let j=0;j<n;j++){const pid=p[(id*5+j)%6].id,poli=POLI[(id+j)%3];
+   const done=d<0||j<n-1;
+   k.push({id:id++,pid,tgl:dstr(d),poli,keluhan:['Batuk pilek','Nyeri ulu hati','Pusing, tensi tinggi','Lemas, sering haus','BAB cair','Pegal-pegal'][(id+j)%6],
+   no:poli[0]+String(j+1).padStart(2,'0'),status:done?'Selesai':(j==n-1?'Menunggu':'Menunggu'),
+   ttv:done?{td:'1'+(2+(id%3))+'0/8'+(id%3),suhu:(36.4+(id%5)*.3).toFixed(1),bb:50+id%25,nadi:72+id%15}:null,
+   dx:done?DX[(id*3+j)%DX.length]:'',terapi:done?'Terapi simptomatik, edukasi, kontrol bila perlu':''});}}
+ return {pasien:p,kunjungan:k,seqP:7,seqK:id};
+}
+let db=S.get('simpus_db')||seed();
+db.obat=db.obat||[['Paracetamol 500 mg','tablet',200,50],['Amoxicillin 500 mg','kapsul',120,40],['Antasida DOEN','tablet',90,30],['Amlodipine 5 mg','tablet',60,30],['Metformin 500 mg','tablet',25,30],['ORS','sachet',40,20],['CTM 4 mg','tablet',150,40]].map((r,i)=>({id:'O'+(i+1),nama:r[0],satuan:r[1],stok:r[2],min:r[3]}));
+db.seqO=db.seqO||8;db.cfg=db.cfg||CFG;db.info=db.info||{teks:'',t:''};db.log=db.log||[];S.set('simpus_db',db);
+const logA=a=>{db.log.unshift({t:new Date().toISOString(),u:user?user.u:'-',a});db.log=db.log.slice(0,200);save()};
+let user=null;
+let toastT;
+const save=()=>S.set('simpus_db',db);
+const nama=id=>(db.pasien.find(p=>p.id==id)||{}).nama||'-';
+const umur=l=>Math.floor((Date.now()-new Date(l))/31557600000);
+function toast(m){let t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2200)}
+const view=()=>(location.hash.slice(1)||'dashboard');
+const doLogout=async()=>{if(!await dlg('Keluar dari akun ini?',{ok:'Logout'}))return;logA('Logout');user=null;S.set('simpus_user',null);location.hash='';render()};
+let idle;const bump=()=>{clearTimeout(idle);if(user)idle=setTimeout(()=>{logA('Logout otomatis (tidak aktif)');user=null;S.set('simpus_user',null);render();toast('Sesi berakhir karena tidak aktif 15 menit')},900000)};
+['click','keydown','touchstart'].forEach(e=>addEventListener(e,bump));
+
+function login(tab='in'){
+ const inn=tab==='in';
+ $('app').innerHTML=`<div class="login"><div class="box"><h2>SIMPUS Sehat</h2><p class="sub">Layanan rawat jalan puskesmas. Pasien dapat mengambil antrean online.</p>
+ <div style="display:flex;gap:8px"><button class="btn ${tab==='in'?'':'alt'}" id="t1">Masuk</button><button class="btn ${tab==='pt'?'':'alt'}" id="t3">Daftar pasien</button><button class="btn ${tab==='up'?'':'alt'}" id="t2">Akun staf</button></div>
+ ${tab==='rs'?`<h3 style="margin:14px 0 0">Reset kata sandi pasien</h3><p class="hint" style="margin-top:4px">Verifikasi dengan data yang terdaftar di puskesmas.</p><label for="ru2">Nama pengguna</label><input id="ru2" autocomplete="username"><label for="rn2">NIK</label><input id="rn2" inputmode="numeric" maxlength="16"><label for="rl2">Tanggal lahir</label><input id="rl2" type="date"><label for="rh2">4 digit terakhir No. HP terdaftar</label><input id="rh2" inputmode="numeric" maxlength="4"><label for="rp2">Kata sandi baru (min. 8 karakter, huruf dan angka)</label><input id="rp2" type="password" autocomplete="new-password"><div class="err" id="er"></div><p><button class="btn" id="rs2">Atur ulang kata sandi</button> <button class="btn alt" id="rb2">Kembali</button></p><p class="hint">Jika No. HP belum terdaftar atau data tidak cocok, datang ke loket puskesmas dengan KTP.</p>`:tab==='pt'?`<p class="hint" style="margin:12px 0 0">Pasien baru maupun lama. Akun langsung aktif.</p><label for="qn">NIK (16 digit)</label><input id="qn" inputmode="numeric" maxlength="16"><label for="qa">Nama lengkap</label><input id="qa"><div class="row"><div><label for="ql">Tanggal lahir</label><input id="ql" type="date"></div><div><label for="qj">Jenis kelamin</label><select id="qj"><option value="P">Perempuan</option><option value="L">Laki-laki</option></select></div></div><label for="qt">No. HP</label><input id="qt" inputmode="tel"><label for="qu">Nama pengguna</label><input id="qu" autocomplete="username"><label for="qp">Kata sandi (min. 8 karakter, huruf dan angka)</label><input id="qp" type="password" autocomplete="new-password"><label for="qc">Ulangi kata sandi</label><input id="qc" type="password" autocomplete="new-password"><label class="ck"><input type="checkbox" id="qs">Saya setuju data pribadi dan data kesehatan saya diproses puskesmas untuk layanan berobat.</label><div class="err" id="er"></div><p><button class="btn" id="qg">Buat akun pasien</button></p><p class="hint">Jika NIK sudah terdaftar di puskesmas, tanggal lahir harus sama dengan data kami.</p>`:inn?`<label for="u">Nama pengguna</label><input id="u" autocomplete="username"><label for="pw">Kata sandi</label><input id="pw" type="password" autocomplete="current-password">
+ <label class="ck"><input type="checkbox" id="sp">Tampilkan kata sandi</label><div class="err" id="er"></div><p><button class="btn" id="go">Masuk</button></p>
+ <p class="hint">Staf: minta administrator mereset akun. <a href="#" id="lp">Pasien lupa kata sandi?</a></p>`
+ :`<label for="rn">Nama lengkap</label><input id="rn"><label for="ru">Nama pengguna</label><input id="ru" autocomplete="username"><label for="rr">Peran</label><select id="rr"><option value="petugas">Petugas pendaftaran</option><option value="dokter">Dokter</option></select>
+ <label for="rp">Kata sandi (min. 8 karakter, huruf dan angka)</label><input id="rp" type="password" autocomplete="new-password"><label for="rc">Ulangi kata sandi</label><input id="rc" type="password" autocomplete="new-password">
+ <div class="err" id="er"></div><p><button class="btn" id="rg">Kirim pendaftaran</button></p><p class="hint">Akun aktif setelah disetujui administrator.</p>`}</div></div>`;
+ $('t1').onclick=()=>login('in');$('t2').onclick=()=>login('up');$('t3').onclick=()=>login('pt');
+ if(inn&&$('lp'))$('lp').onclick=e=>{e.preventDefault();login('rs')};
+ if(tab==='rs'){$('rb2').onclick=()=>login('in');$('rs2').onclick=async()=>{const e=$('er'),un=$('ru2').value.trim().toLowerCase(),k='rs:'+un,f=S.get('simpus_fail')||{},x=f[k]||{n:0,until:0};
+  if(x.until>Date.now())return e.textContent='Terlalu banyak percobaan. Coba lagi dalam '+Math.ceil((x.until-Date.now())/60000)+' menit.';
+  const a=db.users.find(z=>z.u===un&&z.role==='pasien'),pt=a&&db.pasien.find(z=>z.id===a.pid),hp=((pt&&pt.telp)||'').replace(/\D/g,'');
+  const ok=pt&&hp.length>=4&&pt.nik===$('rn2').value.trim()&&pt.lahir===$('rl2').value&&hp.slice(-4)===$('rh2').value.trim();
+  if(!ok){x.n++;if(x.n>=3){x.until=Date.now()+300000;x.n=0}f[k]=x;S.set('simpus_fail',f);return e.textContent=x.until>Date.now()?'Terlalu banyak percobaan. Dikunci 5 menit.':'Data verifikasi tidak cocok. Sisa percobaan: '+(3-x.n)+'.'}
+  if(!pwOk($('rp2').value))return e.textContent='Kata sandi baru minimal 8 karakter dengan huruf dan angka.';
+  a.h=await hash($('rp2').value);delete f[k];S.set('simpus_fail',f);const w=user;user=a;logA('Reset sandi pasien (verifikasi data)');user=w;save();
+  login('in');$('er').style.color='var(--ok)';$('er').textContent='Kata sandi diganti. Silakan masuk.'};return}
+ if(tab==='pt'){$('qg').onclick=async()=>{const e=$('er'),nik=$('qn').value.trim(),n=$('qa').value.trim(),l=$('ql').value,un=$('qu').value.trim().toLowerCase(),p=$('qp').value;
+  if(!/^\d{16}$/.test(nik))return e.textContent='NIK harus 16 digit angka.';
+  if(n.length<3)return e.textContent='Isi nama lengkap.';
+  if(!l||new Date(l)>new Date())return e.textContent='Isi tanggal lahir dengan benar.';
+  if(!/^[a-z0-9_]{4,20}$/.test(un))return e.textContent='Nama pengguna 4–20 karakter: huruf kecil, angka, atau garis bawah.';
+  if(db.users.some(z=>z.u===un))return e.textContent='Nama pengguna sudah dipakai.';
+  if(!pwOk(p))return e.textContent='Kata sandi minimal 8 karakter dengan huruf dan angka.';
+  if(p!==$('qc').value)return e.textContent='Konfirmasi kata sandi tidak sama.';
+  if(!$('qs').checked)return e.textContent='Centang persetujuan pengolahan data untuk melanjutkan.';
+  let pt=db.pasien.find(x=>x.nik===nik);
+  if(pt){if(pt.lahir!==l)return e.textContent='Tanggal lahir tidak cocok dengan data pasien yang terdaftar.';
+   if(db.users.some(z=>z.pid===pt.id))return e.textContent='NIK ini sudah memiliki akun pasien.'}
+  else{pt={id:'P'+String(db.seqP++).padStart(3,'0'),nik,nama:n,lahir:l,jk:$('qj').value,alamat:'',telp:$('qt').value.trim(),bpjs:'',alergi:''};db.pasien.push(pt)}
+  db.users.push({u:un,h:await hash(p),nama:pt.nama,role:'pasien',pid:pt.id,status:'Aktif',dibuat:today,login:'',setuju:new Date().toISOString()});save();
+  login('in');$('er').style.color='var(--ok)';$('er').textContent='Akun pasien dibuat. Silakan masuk.'};return}
+ if(inn){
+  $('sp').onchange=e=>$('pw').type=e.target.checked?'text':'password';
+  const go=async()=>{const un=$('u').value.trim().toLowerCase(),f=S.get('simpus_fail')||{},x=f[un]||{n:0,until:0};
+   if(x.until>Date.now())return $('er').textContent='Akun dikunci sementara. Coba lagi dalam '+Math.ceil((x.until-Date.now())/60000)+' menit.';
+   const a=db.users.find(z=>z.u===un);
+   if(a&&await verify(a,$('pw').value)){
+    if(a.status==='Pending')return $('er').textContent='Akun menunggu persetujuan administrator.';
+    if(a.status!=='Aktif')return $('er').textContent='Akun dinonaktifkan. Hubungi administrator.';
+    delete f[un];S.set('simpus_fail',f);user=a;S.set('simpus_user',a.u);a.login=new Date().toISOString();logA('Login');intro();
+   }else{x.n++;if(x.n>=3){x.until=Date.now()+300000;x.n=0}f[un]=x;S.set('simpus_fail',f);
+    $('er').textContent=x.until>Date.now()?'Terlalu banyak percobaan. Akun dikunci 5 menit.':'Nama pengguna atau kata sandi salah. Sisa percobaan: '+(3-x.n)+'.'}};
+  $('go').onclick=go;$('pw').onkeydown=e=>{if(e.key==='Enter')go()};
+ }else $('rg').onclick=async()=>{const n=$('rn').value.trim(),un=$('ru').value.trim().toLowerCase(),p=$('rp').value,e=$('er');
+  if(n.length<3)return e.textContent='Isi nama lengkap.';
+  if(!/^[a-z0-9_]{4,20}$/.test(un))return e.textContent='Nama pengguna 4–20 karakter: huruf kecil, angka, atau garis bawah.';
+  if(db.users.some(z=>z.u===un))return e.textContent='Nama pengguna sudah dipakai.';
+  if(!pwOk(p))return e.textContent='Kata sandi minimal 8 karakter dengan huruf dan angka.';
+  if(p!==$('rc').value)return e.textContent='Konfirmasi kata sandi tidak sama.';
+  db.users.push({u:un,h:await hash(p),nama:n,role:$('rr').value,status:'Pending',dibuat:today,login:''});save();
+  login('in');$('er').style.color='var(--ok)';$('er').textContent='Pendaftaran terkirim. Akun aktif setelah disetujui administrator.'};
+}
+
+function render(){
+ if(!user)return login();
+ const v=view(),m=user.role==='pasien'?MENU.pasien:[...MENU[user.role],['profil','Profil saya']];
+ const allowed=m.some(x=>x[0]===v)?v:m[0][0];
+ const nav=m.map(x=>`<a href="#${x[0]}" class="${x[0]===allowed?'on':''}">${x[1]}</a>`).join('');
+ document.getElementById('app').innerHTML=`<div class="wrap"><nav><h1>SIMPUS Sehat</h1><small>${esc(db.cfg.nama)}</small>${nav}
+ <div class="who">${esc(user.nama)}<br><span style="opacity:.75">${ROLE[user.role]}</span><br><button id="lo">Logout</button></div></nav><div><div class="topbar noprint"><span>${esc(user.nama)} · ${ROLE[user.role]}</span><button class="btn alt sm" id="lo2">Logout</button></div><main id="m"></main></div></div>`;
+ $('lo').onclick=doLogout;$('lo2').onclick=doLogout;bump();
+ V[allowed](document.getElementById('m'));
+}
+window.addEventListener('hashchange',render);
+
+const V={};
+V.dashboard=m=>{
+ const kt=db.kunjungan.filter(k=>k.tgl===today),sel=kt.filter(k=>k.status==='Selesai').length;
+ const days=[...Array(7)].map((_,i)=>dstr(i-6)),cnt=days.map(d=>db.kunjungan.filter(k=>k.tgl===d).length),mx=Math.max(...cnt,1);
+ const dxc={};db.kunjungan.filter(k=>k.dx).forEach(k=>dxc[k.dx]=(dxc[k.dx]||0)+1);
+ const top=Object.entries(dxc).sort((a,b)=>b[1]-a[1]).slice(0,5);
+ m.innerHTML=`<h2>Dashboard</h2><p class="sub">Ringkasan layanan hari ini, ${new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}.</p>
+ ${quick()}<div class="stats"><div><b>${db.pasien.length}</b><span>Pasien terdaftar</span></div><div><b>${kt.length}</b><span>Kunjungan hari ini</span></div>
+ <div><b>${kt.filter(k=>k.status==='Menunggu').length}</b><span>Menunggu dipanggil</span></div><div><b>${sel}</b><span>Selesai diperiksa</span></div></div>
+ ${lowBox()}<div class="grid"><div class="box"><h3>Kunjungan 7 hari terakhir</h3><div class="bars">${cnt.map((c,i)=>`<div><em>${c}</em><i style="height:${c/mx*100}%"></i>${days[i].slice(5)}</div>`).join('')}</div></div>
+ <div class="box"><h3>Diagnosis terbanyak</h3>${top.map(t=>`<div class="dx"><span>${esc(t[0])}</span><b>${t[1]}</b></div>`).join('')||'<p class="empty">Belum ada diagnosis.</p>'}</div></div>
+ <div class="box"><h3>Antrean hari ini</h3>${antreanTbl(kt)}</div>`;
+};
+function quick(){const q={admin:[['pengguna','Kelola pengguna'],['obat','Cek stok obat'],['laporan','Buka laporan']],petugas:[['pasien','Pasien baru'],['daftar','Daftarkan kunjungan'],['laporan','Laporan']],dokter:[['periksa','Mulai pemeriksaan'],['rekam','Rekam medis'],['obat','Stok obat']]}[user.role];
+ return `<div class="noprint" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">${q.map((x,i)=>`<a class="btn ${i?'alt':''}" style="text-decoration:none" href="#${x[0]}">${x[1]}</a>`).join('')}</div>`}
+function lowBox(){const l=db.obat.filter(o=>o.stok<=o.min),pn=db.users.filter(x=>x.status==='Pending').length;let h=db.info&&db.info.teks?`<div class="box" style="border-left:4px solid var(--teal)"><b>Pengumuman</b><br>${esc(db.info.teks)}<br><small>${esc(db.info.t)}</small></div>`:'';
+ if(user.role==='admin'&&pn)h+=`<div class="box"><b>${pn} akun menunggu persetujuan.</b> <a href="#pengguna">Tinjau di Manajemen pengguna</a></div>`;
+ if(user.role!=='petugas'&&l.length)h+=`<div class="box"><h3>Stok obat menipis</h3>${l.map(o=>`<div class="dx"><span>${esc(o.nama)}</span><b style="color:var(--red)">${o.stok} ${o.satuan}</b></div>`).join('')}</div>`;return h}
+function antreanTbl(list){
+ if(!list.length)return '<p class="empty">Belum ada antrean hari ini.</p>';list=[...list].sort(byPri);
+ return `<div class="scroll"><table><tr><th>No</th><th>Pasien</th><th>Poli</th><th>Keluhan</th><th>Status</th></tr>${list.map(k=>`<tr><td><b>${k.no}</b>${k.darurat?' <span class="tag Menipis">Darurat</span>':''}</td><td>${esc(nama(k.pid))}</td><td>${k.poli}</td><td>${esc(k.keluhan)}</td><td><span class="tag ${k.status}">${k.status}</span></td></tr>`).join('')}</table></div>`;
+}
+
+V.pasien=m=>{
+ let q='';
+ const draw=()=>{const l=db.pasien.filter(p=>(p.nama+p.nik+p.id).toLowerCase().includes(q.toLowerCase()));
+  document.getElementById('pl').innerHTML=l.length?`<div class="scroll"><table><tr><th>No. RM</th><th>Nama</th><th>NIK</th><th>Umur</th><th>JK</th><th>BPJS</th><th></th></tr>${l.map(p=>`<tr><td>${p.id}</td><td><b>${esc(p.nama)}</b>${p.alergi?' <span class="tag Menipis">Alergi</span>':''}<br><small>${esc(p.alamat)}</small></td><td>${esc(p.nik)}</td><td>${umur(p.lahir)} th</td><td>${p.jk}</td><td>${esc(p.bpjs)||'Umum'}</td><td><button class="btn alt sm" data-e="${p.id}">Ubah</button> <button class="btn del sm" data-d="${p.id}">Hapus</button></td></tr>`).join('')}</table></div>`:'<p class="empty">Pasien tidak ditemukan. Ubah kata kunci atau tambah pasien baru.</p>';
+  document.querySelectorAll('[data-e]').forEach(b=>b.onclick=()=>form(b.dataset.e));
+  document.querySelectorAll('[data-d]').forEach(b=>b.onclick=async()=>{if(await dlg('Hapus pasien dan seluruh riwayat kunjungannya?',{ok:'Hapus'})){db.pasien=db.pasien.filter(p=>p.id!==b.dataset.d);db.kunjungan=db.kunjungan.filter(k=>k.pid!==b.dataset.d);save();draw();toast('Pasien dihapus')}});};
+ const form=id=>{const p=db.pasien.find(x=>x.id===id)||{};
+  document.getElementById('fm').innerHTML=`<div class="box"><h3>${id?'Ubah data pasien':'Pasien baru'}</h3><div class="row">
+  <div><label for="f1">NIK (16 digit)</label><input id="f1" maxlength="16" value="${esc(p.nik)}"></div><div><label for="f2">Nama lengkap</label><input id="f2" value="${esc(p.nama)}"></div>
+  <div><label for="f3">Tanggal lahir</label><input id="f3" type="date" value="${p.lahir||''}"></div><div><label for="f4">Jenis kelamin</label><select id="f4"><option value="L" ${p.jk=='L'?'selected':''}>Laki-laki</option><option value="P" ${p.jk=='P'?'selected':''}>Perempuan</option></select></div>
+  <div><label for="f5">No. telepon</label><input id="f5" value="${esc(p.telp)}"></div><div><label for="f6">No. BPJS (jika ada)</label><input id="f6" value="${esc(p.bpjs)}"></div></div>
+  <label for="f7">Alamat</label><input id="f7" value="${esc(p.alamat)}"><label for="f8">Alergi obat atau makanan (kosongkan bila tidak ada)</label><input id="f8" value="${esc(p.alergi)}"><div class="err" id="fe"></div><p><button class="btn" id="sv">Simpan</button> <button class="btn alt" id="cx">Batal</button></p></div>`;
+  document.getElementById('cx').onclick=()=>document.getElementById('fm').innerHTML='';
+  document.getElementById('sv').onclick=()=>{const g=i=>document.getElementById('f'+i).value.trim();
+   if(!/^\d{16}$/.test(g(1)))return document.getElementById('fe').textContent='NIK harus 16 digit angka.';
+   if(!g(2)||!g(3))return document.getElementById('fe').textContent='Nama dan tanggal lahir wajib diisi.';
+   if(db.pasien.some(x=>x.nik===g(1)&&x.id!==id))return document.getElementById('fe').textContent='NIK sudah terdaftar.';
+   const o={nik:g(1),nama:g(2),lahir:g(3),jk:g(4),telp:g(5),bpjs:g(6),alamat:g(7),alergi:g(8)};
+   if(id)Object.assign(p,o);else db.pasien.push({id:'P'+String(db.seqP++).padStart(3,'0'),...o});
+   logA((id?'Ubah':'Tambah')+' pasien '+o.nama);document.getElementById('fm').innerHTML='';draw();toast('Data pasien disimpan')};};
+ m.innerHTML=`<div class="top"><div><h2>Data pasien</h2><p class="sub" style="margin:0">Kelola identitas pasien dan nomor rekam medis.</p></div><button class="btn" id="add">Tambah pasien</button></div>
+ <div id="fm"></div><div class="box"><input id="sr" placeholder="Cari nama, NIK, atau No. RM" aria-label="Cari pasien"><div id="pl" style="margin-top:12px"></div></div>`;
+ document.getElementById('add').onclick=()=>form();document.getElementById('sr').oninput=e=>{q=e.target.value;draw()};draw();
+};
+
+V.daftar=m=>{
+ const draw=()=>{const kt=db.kunjungan.filter(k=>k.tgl===today);document.getElementById('al').innerHTML=antreanTbl(kt)};
+ m.innerHTML=`<h2>Pendaftaran & antrean</h2><p class="sub">Daftarkan kunjungan pasien dan keluarkan nomor antrean.</p>
+ <div class="box"><div class="row"><div><label for="dp">Pasien</label><select id="dp">${db.pasien.map(p=>`<option value="${p.id}">${p.id} – ${esc(p.nama)}</option>`).join('')}</select></div>
+ <div><label for="dl">Poli tujuan</label><select id="dl">${POLI.map(x=>`<option>${x}</option>`).join('')}</select></div></div>
+ <label for="dk">Keluhan utama</label><input id="dk" placeholder="Contoh: demam tiga hari"><label class="ck"><input type="checkbox" id="dd">Pasien darurat (didahulukan di antrean)</label><div class="err" id="de"></div>
+ <p><button class="btn" id="dg">Daftarkan kunjungan</button></p></div>
+ <div class="box"><h3>Antrean hari ini</h3><div id="al"></div></div>`;
+ document.getElementById('dg').onclick=()=>{const pid=document.getElementById('dp').value,poli=document.getElementById('dl').value,kel=document.getElementById('dk').value.trim();
+  if(!pid)return document.getElementById('de').textContent='Tambahkan pasien terlebih dahulu.';
+  if(!kel)return document.getElementById('de').textContent='Isi keluhan utama pasien.';
+  if(db.kunjungan.some(k=>k.tgl===today&&k.pid===pid&&k.poli===poli&&k.status!=='Selesai'))return document.getElementById('de').textContent='Pasien sudah memiliki antrean aktif di poli ini.';
+  const n=db.kunjungan.filter(k=>k.tgl===today&&k.poli===poli).length+1,no=poli[0]+String(n).padStart(2,'0');
+  db.kunjungan.push({id:db.seqK++,pid,tgl:today,poli,keluhan:kel,no,status:'Menunggu',darurat:$('dd').checked,ttv:null,dx:'',terapi:''});logA('Daftar kunjungan '+no+' ('+nama(pid)+')');
+  document.getElementById('dk').value='';$('dd').checked=false;document.getElementById('de').textContent='';draw();toast('Nomor antrean '+no+' diterbitkan')};
+ draw();
+};
+
+V.periksa=m=>{
+ const list=()=>db.kunjungan.filter(k=>k.tgl===today&&k.status!=='Selesai').sort(byPri);
+ const draw=()=>{const l=list();document.getElementById('ql').innerHTML=l.length?`<div class="scroll"><table><tr><th>No</th><th>Pasien</th><th>Poli</th><th>Keluhan</th><th>Status</th><th></th></tr>${l.map(k=>`<tr><td><b>${k.no}</b>${k.darurat?' <span class="tag Menipis">Darurat</span>':''}</td><td>${esc(nama(k.pid))}</td><td>${k.poli}</td><td>${esc(k.keluhan)}</td><td><span class="tag ${k.status}">${k.status}</span></td><td><button class="btn sm" data-p="${k.id}">${k.status==='Menunggu'?'Panggil':'Lanjutkan'}</button></td></tr>`).join('')}</table></div>`:'<p class="empty">Tidak ada pasien yang menunggu. Antrean baru muncul setelah petugas mendaftarkan kunjungan.</p>';
+  document.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{const k=db.kunjungan.find(x=>x.id==b.dataset.p);k.status='Diperiksa';save();draw();exam(k)})};
+ const exam=k=>{const p=db.pasien.find(x=>x.id===k.pid);let rx=[];
+  document.getElementById('ex').innerHTML=`<div class="box"><h3>Pemeriksaan: ${esc(p.nama)} (${umur(p.lahir)} th, ${p.jk})</h3><p class="sub">Keluhan: ${esc(k.keluhan)}</p>${p.alergi?`<p class="err" style="margin:0 0 8px"><b>Riwayat alergi:</b> ${esc(p.alergi)}</p>`:''}
+  <div class="row"><div><label for="x1">Tekanan darah (mmHg)</label><input id="x1" placeholder="120/80"></div><div><label for="x2">Suhu (°C)</label><input id="x2" type="number" step="0.1"></div>
+  <div><label for="x3">Berat badan (kg)</label><input id="x3" type="number"></div><div><label for="x4">Nadi (x/menit)</label><input id="x4" type="number"></div></div>
+  <label for="x5">Diagnosis</label><select id="x5">${DX.map(d=>`<option>${d}</option>`).join('')}</select>
+  <label for="xo">Resep obat (opsional, stok berkurang otomatis)</label><div class="row"><div><select id="xo">${db.obat.map(o=>`<option value="${o.id}">${esc(o.nama)} (stok ${o.stok})</option>`).join('')}</select></div><div><input id="xq" type="number" min="1" value="1" aria-label="Jumlah"></div></div>
+  <p><button class="btn alt sm" id="xa">Tambah ke resep</button></p><div class="hint" id="xr"></div><label for="x6">Terapi dan anjuran</label><textarea id="x6" rows="3"></textarea><div class="err" id="xe"></div>
+  <p><button class="btn" id="xs">Simpan ke rekam medis</button></p></div>`;
+  document.getElementById('ex').scrollIntoView({behavior:'smooth'});
+  const showRx=()=>$('xr').textContent=rx.length?'Resep: '+rx.map(r=>db.obat.find(o=>o.id===r.id).nama+' x'+r.q).join('; '):'';
+  $('xa').onclick=()=>{const o=db.obat.find(z=>z.id===$('xo').value),q=parseInt($('xq').value,10),used=rx.filter(r=>r.id===o.id).reduce((a,r)=>a+r.q,0);
+   if(!(q>0))return $('xe').textContent='Jumlah obat harus lebih dari 0.';
+   if((p.alergi||'').toLowerCase().split(/[,;]/).some(a=>a.trim()&&o.nama.toLowerCase().includes(a.trim())))return $('xe').textContent='Peringatan: pasien alergi '+p.alergi+'. '+o.nama+' tidak ditambahkan ke resep.';
+   if(used+q>o.stok)return $('xe').textContent='Stok '+o.nama+' tidak cukup (tersisa '+(o.stok-used)+').';
+   $('xe').textContent='';rx.push({id:o.id,q});showRx()};
+  document.getElementById('xs').onclick=()=>{const g=i=>document.getElementById('x'+i).value.trim();
+   if(!g(1)||!g(2)||!g(6))return document.getElementById('xe').textContent='Isi tekanan darah, suhu, dan terapi sebelum menyimpan.';
+   k.ttv={td:g(1),suhu:g(2),bb:g(3),nadi:g(4)};k.dx=g(5);k.terapi=g(6)+(rx.length?' | Resep: '+rx.map(r=>db.obat.find(o=>o.id===r.id).nama+' x'+r.q).join('; '):'');rx.forEach(r=>db.obat.find(o=>o.id===r.id).stok-=r.q);k.status='Selesai';logA('Rekam medis '+k.no+' ('+nama(k.pid)+')');
+   document.getElementById('ex').innerHTML='';draw();toast('Rekam medis tersimpan')};};
+ m.innerHTML=`<h2>Pemeriksaan</h2><p class="sub">Panggil pasien, catat tanda vital, diagnosis, dan terapi.</p><div id="ex"></div><div class="box"><h3>Antrean aktif</h3><div id="ql"></div></div>`;
+ draw();
+};
+
+V.rekam=m=>{
+ m.innerHTML=`<div class="top"><div><h2>Rekam medis</h2><p class="sub" style="margin:0">Riwayat pemeriksaan per pasien.</p></div><button class="btn alt noprint" onclick="print()">Cetak</button></div>
+ <div class="box noprint"><label for="rp">Pilih pasien</label><select id="rp">${db.pasien.map(p=>`<option value="${p.id}">${p.id} – ${esc(p.nama)}</option>`).join('')}</select></div><div id="sks"></div><div id="rr"></div>`;
+ const draw=()=>{const p=db.pasien.find(x=>x.id===document.getElementById('rp').value);if(!p)return document.getElementById('rr').innerHTML='<p class="empty">Belum ada pasien.</p>';
+  const h=db.kunjungan.filter(k=>k.pid===p.id&&k.status==='Selesai').sort((a,b)=>b.tgl.localeCompare(a.tgl)||b.id-a.id);
+  document.getElementById('rr').innerHTML=`<div class="box"><h3>${esc(p.nama)} · ${p.id}</h3><p class="sub" style="margin:0">NIK ${esc(p.nik)} · ${umur(p.lahir)} tahun · ${esc(p.alamat)}</p></div>
+  ${h.map(k=>`<div class="tl"><b>${k.tgl}</b> · Poli ${k.poli}<br>Keluhan: ${esc(k.keluhan)}<div class="vit"><span>TD ${esc(k.ttv.td)}</span><span>Suhu ${esc(k.ttv.suhu)}°C</span><span>BB ${esc(k.ttv.bb)} kg</span><span>Nadi ${esc(k.ttv.nadi)}</span></div><b>${esc(k.dx)}</b><br>${esc(k.terapi)}<br><button class="btn alt sm noprint" data-s="${k.id}">Surat sakit</button> <button class="btn alt sm noprint" data-j="${k.id}">Rujukan</button></div>`).join('')||'<p class="empty">Pasien belum memiliki riwayat pemeriksaan.</p>'}`};
+ document.getElementById('rp').onchange=draw;draw();
+ $('rr').onclick=e=>{const b=e.target.closest('[data-s]');if(!b)return;const k=db.kunjungan.find(x=>x.id==b.dataset.s),p=db.pasien.find(x=>x.id===k.pid);
+  $('sks').innerHTML=`<div class="box noprint"><h3>Surat keterangan sakit: ${esc(p.nama)}</h3><label for="sd">Lama istirahat (hari)</label><input id="sd" type="number" min="1" max="14" value="2"><p><button class="btn" id="sg">Buat surat</button></p></div><div id="sl"></div>`;$('sks').scrollIntoView({behavior:'smooth'});
+  $('sg').onclick=()=>{const n=parseInt($('sd').value,10);if(!(n>0&&n<=14))return toast('Isi lama istirahat 1 sampai 14 hari');const c=db.cfg,a=new Date(k.tgl),z=new Date(a);z.setDate(a.getDate()+n-1);logA('Surat sakit untuk '+p.nama);
+   $('sl').innerHTML=`<div class="box"><h3>${esc(c.nama)}</h3><small>${esc(c.alamat)}</small><hr><h3 style="text-align:center">SURAT KETERANGAN SAKIT</h3><p>Yang bertanda tangan di bawah ini, ${esc(user.nama)}, menerangkan bahwa:</p><p><b>${esc(p.nama)}</b>, ${umur(p.lahir)} tahun<br>${esc(p.alamat)}</p><p>memerlukan istirahat selama <b>${n} hari</b>, ${fmt(a)} sampai ${fmt(z)}, karena sakit.</p><p style="margin-top:40px">${esc(user.nama)}<br><small>Dokter pemeriksa</small></p><p class="noprint"><button class="btn" id="ps">Cetak surat</button></p></div>`;
+   $('ps').onclick=()=>{document.body.classList.add('ps');print();document.body.classList.remove('ps')}}};
+ $('rr').addEventListener('click',e=>{const b=e.target.closest('[data-j]');if(!b)return;const k=db.kunjungan.find(x=>x.id==b.dataset.j),p=db.pasien.find(x=>x.id===k.pid);
+  $('sks').innerHTML=`<div class="box noprint"><h3>Surat rujukan: ${esc(p.nama)}</h3><div class="row"><div><label for="jt">Rumah sakit tujuan</label><input id="jt"></div><div><label for="jp">Poli atau spesialis</label><input id="jp"></div></div><label for="ja">Alasan rujukan</label><textarea id="ja" rows="2"></textarea><div class="err" id="je"></div><p><button class="btn" id="jg">Buat surat rujukan</button></p></div><div id="sl"></div>`;$('sks').scrollIntoView({behavior:'smooth'});
+  $('jg').onclick=()=>{const t=$('jt').value.trim(),sp=$('jp').value.trim(),a=$('ja').value.trim();if(!t||!sp||!a)return $('je').textContent='Isi rumah sakit tujuan, poli, dan alasan rujukan.';const c=db.cfg;logA('Rujukan '+p.nama+' ke '+t);
+   $('sl').innerHTML=`<div class="box"><h3>${esc(c.nama)}</h3><small>${esc(c.alamat)}</small><hr><h3 style="text-align:center">SURAT RUJUKAN</h3><p>Kepada Yth. Dokter ${esc(sp)}<br>${esc(t)}</p><p>Mohon pemeriksaan dan penanganan lebih lanjut untuk:</p><p><b>${esc(p.nama)}</b>, ${umur(p.lahir)} tahun (${p.jk==='L'?'laki-laki':'perempuan'})<br>${esc(p.alamat)}${p.bpjs?'<br>No. BPJS '+esc(p.bpjs):''}</p><p>Diagnosis: <b>${esc(k.dx)}</b><br>Tanda vital: TD ${esc(k.ttv.td)}, suhu ${esc(k.ttv.suhu)}°C, nadi ${esc(k.ttv.nadi)}<br>Terapi yang telah diberikan: ${esc(k.terapi)}<br>${p.alergi?'Alergi: '+esc(p.alergi)+'<br>':''}Alasan rujukan: ${esc(a)}</p><p>Demikian surat rujukan ini. Atas perhatiannya kami ucapkan terima kasih.</p><p style="margin-top:40px">${fmt(new Date())}<br>${esc(user.nama)}<br><small>Dokter pemeriksa</small></p><p class="noprint"><button class="btn" id="ps2">Cetak surat</button></p></div>`;
+   $('ps2').onclick=()=>{document.body.classList.add('ps');print();document.body.classList.remove('ps')}}});
+};
+
+V.laporan=m=>{
+ m.innerHTML=`<div class="top"><div><h2>Laporan kunjungan</h2><p class="sub" style="margin:0">Filter periode lalu salin atau cetak.</p></div><div class="noprint"><button class="btn alt" id="cp">Salin CSV</button> <button class="btn" onclick="print()">Cetak</button></div></div>
+ <div class="box noprint"><div class="row"><div><label for="l1">Dari</label><input type="date" id="l1" value="${dstr(-6)}"></div><div><label for="l2">Sampai</label><input type="date" id="l2" value="${today}"></div>
+ <div><label for="l3">Poli</label><select id="l3"><option value="">Semua</option>${POLI.map(x=>`<option>${x}</option>`).join('')}</select></div></div></div><div class="box" id="lr"></div>`;
+ let cur=[];const draw=()=>{const a=l1.value,b=l2.value,p=l3.value;
+  cur=db.kunjungan.filter(k=>k.tgl>=a&&k.tgl<=b&&(!p||k.poli===p)).sort((x,y)=>x.tgl.localeCompare(y.tgl)||x.id-y.id);
+  lr.innerHTML=cur.length?`<p><b>${cur.length}</b> kunjungan pada periode ini.</p><div class="scroll"><table><tr><th>Tanggal</th><th>No</th><th>Pasien</th><th>Poli</th><th>Diagnosis</th><th>Status</th></tr>${cur.map(k=>`<tr><td>${k.tgl}</td><td>${k.no}</td><td>${esc(nama(k.pid))}</td><td>${k.poli}</td><td>${esc(k.dx)||'-'}</td><td><span class="tag ${k.status}">${k.status}</span></td></tr>`).join('')}</table></div>`:'<p class="empty">Tidak ada kunjungan pada filter ini.</p>'};
+ ['l1','l2','l3'].forEach(i=>document.getElementById(i).onchange=draw);draw();
+ cp.onclick=async()=>{const csv=['tanggal,no,pasien,poli,diagnosis,status',...cur.map(k=>[k.tgl,k.no,nama(k.pid),k.poli,k.dx,k.status].map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(','))].join('\n');
+  try{await navigator.clipboard.writeText(csv);toast('CSV disalin ke clipboard')}catch(e){toast('Gagal menyalin. Gunakan tombol Cetak.')}};
+};
+V.profil=m=>{
+ m.innerHTML=`<h2>Profil saya</h2><p class="sub">Kelola identitas dan keamanan akun.</p>
+ <div class="box"><h3>Data akun</h3><p>@${esc(user.u)} · ${ROLE[user.role]}<br><small>Terdaftar ${user.dibuat}</small></p><label for="pn">Nama tampilan</label><input id="pn" value="${esc(user.nama)}"><p><button class="btn" id="sn">Simpan nama</button></p></div>
+ <div class="box"><h3>Tampilan</h3><label for="th">Tema</label><select id="th"><option value="auto">Ikuti perangkat</option><option value="light">Terang</option><option value="dark">Gelap</option></select></div>
+ <div class="box"><h3>Ganti kata sandi</h3><div class="row"><div><label for="p1">Sandi saat ini</label><input id="p1" type="password" autocomplete="current-password"></div><div><label for="p2">Sandi baru</label><input id="p2" type="password" autocomplete="new-password"></div><div><label for="p3">Ulangi sandi baru</label><input id="p3" type="password" autocomplete="new-password"></div></div><div class="err" id="pe"></div><p><button class="btn" id="sw">Ganti kata sandi</button></p></div>`;
+ $('th').value=S.get('simpus_theme')||'auto';$('th').onchange=e=>setTheme(e.target.value);
+ $('sn').onclick=()=>{const n=$('pn').value.trim();if(n.length<3)return toast('Nama minimal 3 karakter');user.nama=n;logA('Ubah nama tampilan');render();toast('Nama disimpan')};
+ $('sw').onclick=async()=>{const e=$('pe');
+  if(!await verify(user,$('p1').value))return e.textContent='Sandi saat ini salah.';
+  if(!pwOk($('p2').value))return e.textContent='Sandi baru minimal 8 karakter dengan huruf dan angka.';
+  if($('p2').value!==$('p3').value)return e.textContent='Konfirmasi sandi baru tidak sama.';
+  user.h=await hash($('p2').value);logA('Ganti kata sandi');e.textContent='';['p1','p2','p3'].forEach(i=>$(i).value='');toast('Kata sandi diganti')};
+};
+V.pengguna=m=>{
+ const draw=()=>{$('ul').innerHTML=`<div class="scroll"><table><tr><th>Pengguna</th><th>Peran</th><th>Status</th><th>Login terakhir</th><th></th></tr>${db.users.map(x=>{const me=x.u===user.u,b=(a,t,c='alt')=>`<button class="btn ${c} sm" data-u="${x.u}" data-act="${a}">${t}</button> `;
+  return `<tr><td><b>${esc(x.nama)}</b><br><small>@${esc(x.u)}</small></td><td>${me?ROLE[x.role]:`<select data-r="${x.u}" aria-label="Peran ${esc(x.u)}">${Object.keys(ROLE).map(r=>`<option value="${r}" ${r===x.role?'selected':''}>${ROLE[r]}</option>`).join('')}</select>`}</td><td><span class="tag ${x.status}">${x.status}</span></td><td>${x.login?x.login.slice(0,16).replace('T',' '):'-'}</td>
+  <td>${me?'<small>Akun Anda</small>':(x.status==='Pending'?b('ok','Setujui',''):b('tg',x.status==='Aktif'?'Nonaktifkan':'Aktifkan'))+b('rs','Reset sandi')+b('del','Hapus','del')}</td></tr>`}).join('')}</table></div>`;
+  document.querySelectorAll('[data-r]').forEach(s=>s.onchange=()=>{const x=db.users.find(z=>z.u===s.dataset.r);x.role=s.value;logA('Ubah peran @'+x.u+' menjadi '+ROLE[x.role]);save();toast('Peran diubah')});
+  document.querySelectorAll('[data-act]').forEach(bt=>bt.onclick=async()=>{const x=db.users.find(z=>z.u===bt.dataset.u),a=bt.dataset.act;
+   if(a==='ok'){x.status='Aktif';logA('Setujui akun @'+x.u)}
+   else if(a==='tg'){x.status=x.status==='Aktif'?'Nonaktif':'Aktif';logA(x.status+' akun @'+x.u)}
+   else if(a==='rs'){const t='Sehat'+Math.floor(1000+Math.random()*9000);x.h=await hash(t);logA('Reset sandi @'+x.u);await dlg('Sandi sementara untuk @'+x.u+': '+t+'\nBerikan kepada pengguna dan minta segera menggantinya di menu Profil saya.',{info:1})}
+   else if(a==='del'){if(!await dlg('Hapus akun @'+x.u+'?',{ok:'Hapus'}))return;db.users=db.users.filter(z=>z!==x);logA('Hapus akun @'+x.u)}
+   save();draw()})};
+ m.innerHTML=`<h2>Manajemen pengguna</h2><p class="sub">Setujui pendaftaran, atur peran, nonaktifkan, dan reset kata sandi.</p>
+ <div class="box"><h3>Tambah pengguna</h3><div class="row"><div><label for="an">Nama lengkap</label><input id="an"></div><div><label for="au">Nama pengguna</label><input id="au"></div><div><label for="ar">Peran</label><select id="ar">${Object.keys(ROLE).map(r=>`<option value="${r}">${ROLE[r]}</option>`).join('')}</select></div><div><label for="ap">Sandi awal</label><input id="ap" type="password"></div></div><div class="err" id="ae"></div><p><button class="btn" id="aa">Tambah pengguna</button></p></div>
+ <div class="box" id="ul"></div>`;
+ $('aa').onclick=async()=>{const n=$('an').value.trim(),un=$('au').value.trim().toLowerCase(),p=$('ap').value,e=$('ae');
+  if(n.length<3||!/^[a-z0-9_]{4,20}$/.test(un))return e.textContent='Isi nama lengkap dan nama pengguna 4–20 karakter (huruf kecil, angka, garis bawah).';
+  if(db.users.some(z=>z.u===un))return e.textContent='Nama pengguna sudah dipakai.';
+  if(!pwOk(p))return e.textContent='Sandi minimal 8 karakter dengan huruf dan angka.';
+  db.users.push({u:un,h:await hash(p),nama:n,role:$('ar').value,status:'Aktif',dibuat:today,login:''});logA('Tambah akun @'+un);e.textContent='';['an','au','ap'].forEach(i=>$(i).value='');draw();toast('Pengguna ditambahkan')};
+ draw();
+};
+V.obat=m=>{const ad=user.role==='admin';
+ const draw=()=>{$('ol').innerHTML=`<div class="scroll"><table><tr><th>Obat</th><th>Stok</th><th>Minimum</th><th>Status</th>${ad?'<th></th>':''}</tr>${db.obat.map(o=>{const lo=o.stok<=o.min;return `<tr><td><b>${esc(o.nama)}</b></td><td>${o.stok} ${esc(o.satuan)}</td><td>${o.min}</td><td><span class="tag ${lo?'Menipis':'Aman'}">${lo?'Menipis':'Aman'}</span></td>${ad?`<td><button class="btn alt sm" data-o="${o.id}">Tambah stok</button></td>`:''}</tr>`}).join('')}</table></div>`;
+  document.querySelectorAll('[data-o]').forEach(b=>b.onclick=async()=>{const o=db.obat.find(x=>x.id===b.dataset.o),n=parseInt(await dlg('Jumlah stok masuk untuk '+o.nama+':',{input:1,type:'number',def:'10'}),10);if(n>0){o.stok+=n;logA('Stok masuk '+o.nama+' +'+n);draw();toast('Stok diperbarui')}})};
+ m.innerHTML=`<h2>Stok obat</h2><p class="sub">Stok berkurang otomatis saat dokter menyimpan resep.</p>${ad?`<div class="box"><h3>Tambah jenis obat</h3><div class="row"><div><label for="on">Nama obat</label><input id="on"></div><div><label for="os">Satuan</label><input id="os" value="tablet"></div><div><label for="oq">Stok awal</label><input id="oq" type="number" min="0"></div><div><label for="om">Batas minimum</label><input id="om" type="number" min="0" value="20"></div></div><div class="err" id="oe"></div><p><button class="btn" id="oa">Simpan obat</button></p></div>`:''}<div class="box" id="ol"></div>`;
+ if(ad)$('oa').onclick=()=>{const n=$('on').value.trim(),q=parseInt($('oq').value,10),mn=parseInt($('om').value,10);
+  if(!n||!(q>=0)||!(mn>=0))return $('oe').textContent='Isi nama obat, stok awal, dan batas minimum dengan angka valid.';
+  db.obat.push({id:'O'+db.seqO++,nama:n,satuan:$('os').value.trim()||'unit',stok:q,min:mn});logA('Tambah obat '+n);$('on').value='';$('oq').value='';draw();toast('Obat ditambahkan')};
+ draw();
+};
+V.log=m=>{
+ m.innerHTML=`<h2>Log aktivitas</h2><p class="sub">200 aktivitas terakhir di sistem.</p><div class="box">${db.log.length?`<div class="scroll"><table><tr><th>Waktu</th><th>Pengguna</th><th>Aktivitas</th></tr>${db.log.map(l=>`<tr><td>${new Date(l.t).toLocaleString('id-ID')}</td><td>@${esc(l.u)}</td><td>${esc(l.a)}</td></tr>`).join('')}</table></div>`:'<p class="empty">Belum ada aktivitas tercatat.</p>'}</div>`;
+};
+V.statistik=m=>{
+ m.innerHTML=`<div class="top"><div><h2>Statistik layanan</h2><p class="sub" style="margin:0">Kunjungan, kelompok usia, dan penyakit terbanyak.</p></div><div><label for="sp" style="margin:0 0 4px">Periode</label><select id="sp"><option value="7">7 hari terakhir</option><option value="30">30 hari terakhir</option><option value="0">Semua data</option></select></div></div><div id="sv"></div>`;
+ const draw=()=>{const n=parseInt($('sp').value,10),from=n?dstr(1-n):'0000',l=db.kunjungan.filter(k=>k.tgl>=from&&k.tgl<=today),sel=l.filter(k=>k.status==='Selesai'&&k.dx),
+  cnt=(a,f)=>{const o={};a.forEach(x=>{const v=f(x);o[v]=(o[v]||0)+1});return Object.entries(o).sort((a,b)=>b[1]-a[1])},
+  pas=k=>db.pasien.find(x=>x.id===k.pid),
+  age=k=>{const p=pas(k);if(!p)return 'Tidak diketahui';const u=umur(p.lahir);return u<=5?'Balita (0–5)':u<=17?'Anak dan remaja (6–17)':u<=59?'Dewasa (18–59)':'Lansia (60+)'},
+  sex=k=>{const p=pas(k);return p?(p.jk==='L'?'Laki-laki':'Perempuan'):'Tidak diketahui'},
+  days=n||Math.max(1,new Set(l.map(k=>k.tgl)).size);
+  $('sv').innerHTML=`<div class="stats"><div><b>${l.length}</b><span>Total kunjungan</span></div><div><b>${l.filter(k=>k.status==='Selesai').length}</b><span>Selesai diperiksa</span></div><div><b>${(l.length/days).toFixed(1)}</b><span>Rata-rata per hari</span></div><div><b>${l.filter(k=>k.darurat).length}</b><span>Kasus darurat</span></div></div>
+  <div class="grid"><div class="box"><h3>Kunjungan per poli</h3>${hb(cnt(l,k=>k.poli))}</div><div class="box"><h3>Jenis kelamin pasien</h3>${hb(cnt(l,sex))}</div></div>
+  <div class="grid"><div class="box"><h3>Kelompok usia</h3>${hb(cnt(l,age))}</div><div class="box"><h3>10 diagnosis terbanyak</h3>${hb(cnt(sel,k=>k.dx).slice(0,10))}</div></div>`};
+ $('sp').onchange=draw;draw();
+};
+function intro(){
+ const h=new Date().getHours(),sal=h<11?'Selamat pagi':h<15?'Selamat siang':h<18?'Selamat sore':'Selamat malam',
+ tips={admin:['Setujui akun pendaftar baru di Manajemen pengguna.','Pantau stok obat yang menipis dari dashboard.','Atur identitas puskesmas dan buat cadangan data di Pengaturan.'],
+ petugas:['Tambah pasien baru atau cari pasien lama di Data pasien.','Tandai pasien darurat agar didahulukan di antrean.','Nomor antrean terbit otomatis per poli.'],
+ pasien:['Ambil nomor antrean online dari menu Ambil antrean.','Lihat posisi antrean Anda di Beranda.','Riwayat pemeriksaan tersimpan di Riwayat kunjungan.'],
+ dokter:['Panggil pasien dari menu Pemeriksaan.','Tambahkan resep obat, stok berkurang otomatis.','Buat surat keterangan sakit dari Rekam medis.']}[user.role],
+ st=['Memverifikasi akun','Memuat data pasien dan antrean','Menyiapkan menu '+ROLE[user.role]];let tm,i=0;
+ $('app').innerHTML=`<div class="intro"><div class="ib"><div class="logo">+</div><h1>${sal},<br>${esc(user.nama)}</h1><p>${ROLE[user.role]} · ${esc(db.cfg.nama)}</p>
+ <ul id="st">${st.map(x=>`<li>${x}</li>`).join('')}</ul><div class="bar"><i id="pb"></i></div>
+ <div class="tour" id="tour" hidden><b>Mulai dari sini</b><ul>${tips.map(x=>`<li>${x}</li>`).join('')}</ul><button class="btn" id="en" style="background:#fff;color:#0f5c58">Masuk ke dashboard</button></div>
+ <button class="lnk" id="sk">Lewati</button></div></div>`;
+ const go=()=>{clearTimeout(tm);location.hash=MENU[user.role][0][0];render()},lis=document.querySelectorAll('#st li'),
+ step=()=>{if(i<lis.length){lis[i].className='on';$('pb').style.width=((++i)/lis.length*100)+'%';tm=setTimeout(step,550)}else{$('tour').hidden=false;$('sk').hidden=true;$('en').focus()}};
+ tm=setTimeout(step,300);$('sk').onclick=go;$('en').onclick=go;
+}
+
+const myP=()=>db.pasien.find(p=>p.id===user.pid)||{};
+const myK=()=>db.kunjungan.filter(k=>k.pid===user.pid);
+const ahead=k=>db.kunjungan.filter(x=>x.tgl===k.tgl&&x.poli===k.poli&&x.status==='Menunggu'&&x.id!==k.id&&byPri(x,k)<0).length;
+const myToday=()=>myK().filter(k=>k.tgl===today&&k.status!=='Selesai');
+const qCard=k=>`<div class="box" style="border-left:4px solid var(--teal)"><div class="top" style="margin:0"><div><small>Nomor antrean</small><div style="font-size:38px;font-weight:800;color:var(--teal);line-height:1.1">${k.no}</div><div>Poli ${k.poli} · ${esc(k.keluhan)}</div></div><div style="text-align:right"><span class="tag ${k.status}">${k.status}</span><br><small>${k.status==='Menunggu'?(ahead(k)?ahead(k)+' pasien di depan Anda':'Anda berikutnya'):'Sedang diperiksa'}</small></div></div>${k.status==='Menunggu'&&k.online?`<p style="margin:12px 0 0"><button class="btn del sm" data-cx="${k.id}">Batalkan antrean</button></p>`:''}</div>`;
+const bindCx=m=>m.querySelectorAll('[data-cx]').forEach(b=>b.onclick=async()=>{if(!await dlg('Batalkan antrean ini?',{ok:'Batalkan'}))return;db.kunjungan=db.kunjungan.filter(k=>k.id!=b.dataset.cx);logA('Batalkan antrean online');save();render();toast('Antrean dibatalkan')});
+V.beranda=m=>{const p=myP(),h=new Date().getHours(),sal=h<11?'Selamat pagi':h<15?'Selamat siang':h<18?'Selamat sore':'Selamat malam',ks=myK().filter(k=>k.status==='Selesai').sort((a,b)=>b.tgl.localeCompare(a.tgl)),t=myToday();
+ m.innerHTML=`<h2>${sal}, ${esc((p.nama||user.nama).split(' ')[0])}</h2><p class="sub">${esc(db.cfg.nama)} · ${esc(db.cfg.jam)}</p>
+ ${db.info&&db.info.teks?`<div class="box" style="border-left:4px solid var(--amb)"><b>Pengumuman</b><br>${esc(db.info.teks)}</div>`:''}
+ ${t.length?t.map(qCard).join(''):`<div class="box"><h3>Belum ada antrean hari ini</h3><p class="sub">Ambil nomor antrean dari rumah, lalu datang saat mendekati giliran Anda.</p><a class="btn" href="#antrean" style="text-decoration:none;display:inline-block">Ambil antrean</a></div>`}
+ <div class="stats"><div><b>${ks.length}</b><span>Total kunjungan selesai</span></div><div><b>${ks[0]?ks[0].tgl.slice(5).split('-').reverse().join('/'):'-'}</b><span>Kunjungan terakhir</span></div></div>
+ ${ks[0]?`<div class="box"><h3>Pemeriksaan terakhir</h3><div class="dx"><span>Poli ${ks[0].poli}</span><b>${esc(ks[0].dx||'-')}</b></div><p class="sub" style="margin:8px 0 0">${esc(ks[0].terapi||'')}</p></div>`:''}`;bindCx(m)};
+V.antrean=m=>{const t=myToday();
+ m.innerHTML=`<h2>Ambil antrean</h2><p class="sub">Daftar kunjungan hari ini secara online.</p>${t.map(qCard).join('')}
+ <div class="box"><h3>Antrean baru</h3><div class="row"><div><label for="aq">Poli tujuan</label><select id="aq">${POLI.map(x=>`<option>${x}</option>`).join('')}</select></div></div>
+ <label for="ak">Keluhan utama</label><input id="ak" placeholder="Contoh: demam tiga hari"><div class="err" id="ae" role="alert"></div>
+ <p class="hint">Kondisi gawat darurat: langsung ke loket atau IGD, jangan menunggu antrean online.</p><p><button class="btn" id="ag">Ambil nomor antrean</button></p></div>`;bindCx(m);
+ $('ag').onclick=()=>{const poli=$('aq').value,kel=$('ak').value.trim(),e=$('ae');
+  if(kel.length<3)return e.textContent='Isi keluhan utama Anda.';
+  if(db.kunjungan.some(k=>k.tgl===today&&k.pid===user.pid&&k.poli===poli&&k.status!=='Selesai'))return e.textContent='Anda sudah punya antrean aktif di poli ini.';
+  const n=db.kunjungan.filter(k=>k.tgl===today&&k.poli===poli).length+1,no=poli[0]+String(n).padStart(2,'0');
+  db.kunjungan.push({id:db.seqK++,pid:user.pid,tgl:today,poli,keluhan:kel,no,status:'Menunggu',darurat:false,online:true,ttv:null,dx:'',terapi:''});logA('Ambil antrean online '+no);save();render();toast('Nomor antrean '+no+' diterbitkan')}};
+V.riwayat=m=>{const ks=myK().filter(k=>k.status==='Selesai').sort((a,b)=>b.tgl.localeCompare(a.tgl)||b.id-a.id);
+ m.innerHTML=`<h2>Riwayat kunjungan</h2><p class="sub">Hasil pemeriksaan Anda di puskesmas.</p>${ks.length?ks.map(k=>`<div class="box"><div class="top" style="margin-bottom:6px"><b>${fmt(new Date(k.tgl+'T00:00'))}</b><span class="tag Selesai">Poli ${k.poli} · ${k.no}</span></div>
+ <div class="dx"><span>Keluhan</span><b>${esc(k.keluhan)}</b></div><div class="dx"><span>Diagnosis</span><b>${esc(k.dx||'-')}</b></div>
+ ${k.ttv?`<div class="vit" style="margin:8px 0"><span>TD ${esc(k.ttv.td)}</span><span>Suhu ${esc(k.ttv.suhu)}°C</span><span>BB ${esc(k.ttv.bb)} kg</span><span>Nadi ${esc(k.ttv.nadi)}/mnt</span></div>`:''}
+ <p class="sub" style="margin:6px 0 0">${esc(k.terapi||'')}</p></div>`).join(''):'<div class="box"><p class="empty">Belum ada riwayat kunjungan.</p></div>'}`};
+V.datasaya=m=>{const p=myP();
+ m.innerHTML=`<h2>Data saya</h2><p class="sub">Nomor pasien ${esc(p.id)}. Data identitas diubah lewat petugas.</p>
+ <div class="box"><h3>Identitas</h3><div class="dx"><span>Nama</span><b>${esc(p.nama)}</b></div><div class="dx"><span>NIK</span><b>${esc(p.nik.slice(0,6))}••••••${esc(p.nik.slice(-4))}</b></div><div class="dx"><span>Lahir</span><b>${esc(p.lahir)} (${umur(p.lahir)} th)</b></div><div class="dx"><span>Jenis kelamin</span><b>${p.jk==='L'?'Laki-laki':'Perempuan'}</b></div></div>
+ <div class="box"><h3>Kontak dan kesehatan</h3><label for="d1">Alamat</label><input id="d1" value="${esc(p.alamat)}"><div class="row"><div><label for="d2">No. HP</label><input id="d2" value="${esc(p.telp)}"></div><div><label for="d3">No. BPJS</label><input id="d3" value="${esc(p.bpjs)}"></div></div>
+ <label for="d4">Alergi obat</label><input id="d4" value="${esc(p.alergi)}" placeholder="Kosongkan bila tidak ada"><p><button class="btn" id="ds">Simpan data</button></p></div>
+ <div class="box"><h3>Tampilan</h3><label for="th">Tema</label><select id="th"><option value="auto">Ikuti perangkat</option><option value="light">Terang</option><option value="dark">Gelap</option></select></div>`;
+ $('th').value=S.get('simpus_theme')||'auto';$('th').onchange=e=>setTheme(e.target.value);
+ $('ds').onclick=()=>{Object.assign(p,{alamat:$('d1').value.trim(),telp:$('d2').value.trim(),bpjs:$('d3').value.trim(),alergi:$('d4').value.trim()});logA('Ubah data pasien sendiri');save();toast('Data disimpan')}};
+V.info=m=>{const c=db.cfg;m.innerHTML=`<h2>Info puskesmas</h2><p class="sub">Layanan dan jam buka.</p><div class="box"><h3>${esc(c.nama)}</h3><div class="dx"><span>Alamat</span><b>${esc(c.alamat)}</b></div><div class="dx"><span>Jam layanan</span><b>${esc(c.jam)}</b></div><div class="dx"><span>Poli</span><b>${POLI.join(', ')}</b></div></div>
+ <div class="box"><h3>Antrean hari ini</h3>${POLI.map(po=>{const l=db.kunjungan.filter(k=>k.tgl===today&&k.poli===po);return `<div class="dx"><span>Poli ${po}</span><b>${l.filter(k=>k.status==='Menunggu').length} menunggu · ${l.filter(k=>k.status==='Selesai').length} selesai</b></div>`}).join('')}</div>
+ <div class="box"><h3>Ganti kata sandi</h3><div class="row"><div><label for="p1">Sandi saat ini</label><input id="p1" type="password" autocomplete="current-password"></div><div><label for="p2">Sandi baru</label><input id="p2" type="password" autocomplete="new-password"></div></div><div class="err" id="pe"></div><p><button class="btn" id="sw">Ganti kata sandi</button></p></div>`;
+ $('sw').onclick=async()=>{const e=$('pe');if(!await verify(user,$('p1').value))return e.textContent='Sandi saat ini salah.';if(!pwOk($('p2').value))return e.textContent='Sandi baru minimal 8 karakter dengan huruf dan angka.';user.h=await hash($('p2').value);logA('Ganti kata sandi');save();e.textContent='';$('p1').value=$('p2').value='';toast('Kata sandi diganti')}};
+V.pengaturan=m=>{const c=db.cfg;
+ m.innerHTML=`<h2>Pengaturan</h2><p class="sub">Identitas puskesmas dan cadangan data.</p>
+ <div class="box"><h3>Identitas puskesmas</h3><div class="row"><div><label for="c1">Nama puskesmas</label><input id="c1" value="${esc(c.nama)}"></div><div><label for="c2">Jam layanan</label><input id="c2" value="${esc(c.jam)}"></div></div><label for="c3">Alamat</label><input id="c3" value="${esc(c.alamat)}"><p><button class="btn" id="c4">Simpan pengaturan</button></p></div>
+ <div class="box"><h3>Pengumuman internal</h3><p class="sub">Tampil di dashboard semua pengguna. Kosongkan teks lalu simpan untuk menghapus.</p><textarea id="it" rows="2" aria-label="Teks pengumuman">${esc((db.info||{}).teks)}</textarea><p><button class="btn" id="i1">Simpan pengumuman</button></p></div>
+ <div class="box"><h3>Cadangan dan pemulihan data</h3><p class="sub">Teks cadangan memuat data pasien dan akun. Simpan di tempat aman dan jangan dibagikan.</p><textarea id="bk" rows="5" aria-label="Teks cadangan"></textarea><div class="err" id="be"></div><p><button class="btn alt" id="b1">Buat cadangan</button> <button class="btn" id="b2">Pulihkan dari teks</button></p></div>`;
+ $('c4').onclick=()=>{db.cfg={nama:$('c1').value.trim()||c.nama,jam:$('c2').value.trim(),alamat:$('c3').value.trim()};logA('Ubah pengaturan puskesmas');render();toast('Pengaturan disimpan')};
+ $('i1').onclick=()=>{const t=$('it').value.trim();db.info={teks:t,t:t?'Diumumkan '+fmt(new Date())+' oleh '+user.nama:''};logA(t?'Pasang pengumuman':'Hapus pengumuman');toast(t?'Pengumuman dipasang':'Pengumuman dihapus')};
+ $('b1').onclick=async()=>{$('bk').value=JSON.stringify(db);logA('Buat cadangan data');try{await navigator.clipboard.writeText($('bk').value);toast('Cadangan dibuat dan disalin')}catch(e){toast('Cadangan dibuat. Salin teks secara manual.')}};
+ $('b2').onclick=async()=>{let d;try{d=JSON.parse($('bk').value);if(!Array.isArray(d.pasien)||!Array.isArray(d.kunjungan)||!Array.isArray(d.users))throw 0}catch(e){return $('be').textContent='Teks cadangan tidak valid. Tempel teks cadangan lengkap.'}
+  if(!d.users.some(u=>u.u===user.u&&u.role==='admin'&&u.status==='Aktif'))return $('be').textContent='Cadangan harus memuat akun admin Anda yang masih aktif.';
+  if(!await dlg('Data saat ini akan diganti dengan cadangan. Lanjutkan?',{ok:'Pulihkan'}))return;
+  db=d;db.obat=db.obat||[];db.log=db.log||[];db.seqO=db.seqO||99;db.cfg=db.cfg||CFG;user=db.users.find(x=>x.u===user.u);logA('Pulihkan data dari cadangan');render();toast('Data dipulihkan')};
+};
+(async()=>{
+ if(!db.users){const mk=async(u,pw,nama,role)=>({u,h:await hash(pw),nama,role,status:'Aktif',dibuat:today,login:''});
+  db.users=[await mk('admin','admin123','Administrator Puskesmas','admin'),await mk('petugas','petugas123','Sari Wulandari','petugas'),await mk('dokter','dokter123','dr. Rina Lestari','dokter')];save()}
+ if(!db.users.some(u=>u.role==='pasien')){db.users.push({u:'siti',h:await hash('pasien123'),nama:'Siti Aminah',role:'pasien',pid:'P001',status:'Aktif',dibuat:today,login:''});save()}
+ setTheme(S.get('simpus_theme')||'auto');const su=S.get('simpus_user');user=db.users.find(x=>x.u===su&&x.status==='Aktif')||null;render();
+})();
+</script>
+</body>
+</html>
